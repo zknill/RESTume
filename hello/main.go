@@ -1,14 +1,19 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"github.com/zknill/RESTume/service"
 	"github.com/zknill/RESTume/hello/handlers"
-	"github.com/gorilla/mux"
 )
 
 func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/", handlers.Hello)
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	s := service.Init()
+	end := service.NewEndpoint(
+		"Hello World",
+		"A very endpoint to test the service implementation",
+		"/",
+		handlers.Hello,
+	)
+
+	s.AddEndpoint(end)
+	s.Run()
 }

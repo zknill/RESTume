@@ -9,10 +9,14 @@ type response struct {
 	Hello string
 }
 
-func Hello(w http.ResponseWriter, r *http.Request) {
+// Hello is a basic Handler for an Endpoint
+func Hello(w http.ResponseWriter, r *http.Request) error {
 	resp := response{Hello: "world"}
 
-	// TODO(zak): don't swallow the error
-	b, _ := json.Marshal(resp)
+	b, err := json.Marshal(resp)
+	if err != nil {
+		return err
+	}
 	w.Write(b)
+	return nil
 }
