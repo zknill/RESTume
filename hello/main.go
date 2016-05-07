@@ -1,18 +1,18 @@
 package main
 
 import (
-	"github.com/zknill/RESTume/service"
 	"github.com/zknill/RESTume/hello/handlers"
+	"github.com/zknill/RESTume/service"
 )
 
 func main() {
 	s := service.Init()
-	end := service.NewEndpoint(
-		"Hello World",
-		"A very endpoint to test the service implementation",
-		"/",
-		handlers.Hello,
-	)
+	end := &service.Endpoint{
+		Name:        "Hello World",
+		Description: "A very simple endpoint to test the service implementation",
+		Route:       "/",
+		Handle:      handlers.Hello,
+	}
 
 	s.AddEndpoint(end)
 	s.Run()
