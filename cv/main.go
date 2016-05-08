@@ -32,5 +32,10 @@ func main() {
 		Handle: handlers.Work,
 	})
 
+	s.AddResource(&service.Database{
+		Name: "tiedot",
+		Location: "/tmp/database",
+	})
+
 	s.Run()
 }

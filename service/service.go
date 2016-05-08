@@ -11,6 +11,7 @@ import (
 type Service struct {
 	Name      string
 	Endpoints []*Endpoint
+	Resources []Resource
 }
 
 // Endpoint represents a single API endpoint
@@ -36,6 +37,11 @@ func Init() *Service {
 
 // Run kicks off the service and adds all the handlers for the endpoints.
 func (s *Service) Run() {
+	// Setup all the resources that the service requires.
+	for _, r := range s.Resources {
+		r.Init()
+	}
+
 	router := mux.NewRouter()
 	// Register all the endpoints
 	for _, e := range s.Endpoints {
@@ -51,6 +57,11 @@ func (s *Service) AddEndpoint(e *Endpoint) {
 	s.Endpoints = append(s.Endpoints, e)
 }
 
+// AddResource adds the required external resources to the service
+func (s *Service) AddResource(r Resource) {
+	s.Resources = append(s.Resources, r)
+}
+
 // NewServiceHandler returns a new Handler for the service that implements http.Handler
 func NewServiceHandler(end *Endpoint) *ServiceHandler {
 	return &ServiceHandler{Endpoint: end}
@@ -58,11 +69,10 @@ func NewServiceHandler(end *Endpoint) *ServiceHandler {
 
 // ServeHTTP implements the http.Handler interface for a ServiceHandler
 func (sh *ServiceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Call the correct handler for the endpoint
-
 	// all responses are JSON.
 	w.Header().Add("Content-type", "application/json")
 
+	// Call the correct handler for the endpoint
 	if err := sh.Endpoint.Handle(w, r); err != nil {
 		log.Error(err.Error())
 		http.Error(w, err.Error(), 500)
