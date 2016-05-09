@@ -17,7 +17,7 @@ type Resource interface {
 type Database struct {
 	Name     string
 	Location string
-	data     *tiedot.DB
+	Data     *tiedot.DB
 }
 
 type dbConnectionError struct {
@@ -40,5 +40,5 @@ func (db *Database) Init() {
 			err: dbErr,
 		})
 	}
-	db.data = data
+	db.Data = data
 }
