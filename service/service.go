@@ -19,8 +19,9 @@ type Service struct {
 type Endpoint struct {
 	Name        string
 	Description string
-	Route       string
+	Route       []string
 	Handle      Handler
+	Methods     []string
 }
 
 // ServiceHandler implements the http.Handler interface
@@ -38,7 +39,9 @@ const ContextKey key = 0
 
 // Init returns a new empty web-service
 func Init() *Service {
-	return &Service{}
+	s := &Service{}
+	s.Resources = make(map[string]Resource)
+	return s
 }
 
 // Run kicks off the service and adds all the handlers for the endpoints.
@@ -51,8 +54,12 @@ func (s *Service) Run() {
 	router := mux.NewRouter()
 	// Register all the endpoints
 	for _, e := range s.Endpoints {
-		router.Handle(e.Route, NewServiceHandler(e, s.Resources))
+		// Register the different routes for each endpoint
+		for _, r := range e.Route {
+			router.Handle(r, NewServiceHandler(e, s.Resources)).Methods(e.Methods...)
+		}
 	}
+
 	// Register the router as the http.Handler
 	http.Handle("/", router)
 	log.Fatal(http.ListenAndServe(":8000", nil))
@@ -69,7 +76,7 @@ func (s *Service) AddResource(key string, r Resource) {
 }
 
 // NewServiceHandler returns a new Handler for the service that implements http.Handler
-func NewServiceHandler(end *Endpoint, r []Resource) *ServiceHandler {
+func NewServiceHandler(end *Endpoint, r map[string]Resource) *ServiceHandler {
 	return &ServiceHandler{Endpoint: end, Resources: r}
 }
 

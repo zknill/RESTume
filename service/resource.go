@@ -40,5 +40,10 @@ func (db *Database) Init() {
 			err: dbErr,
 		})
 	}
+
+	// Set up the collections - throw away the error for now.
+	data.Create("career")
+	data.Use("career").Index([]string{"Company"})
+
 	db.Data = data
 }

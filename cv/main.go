@@ -7,29 +7,34 @@ import (
 
 func main() {
 	s := service.Init()
+
 	s.AddEndpoint(&service.Endpoint{
 		Name:        "About",
 		Description: "A little about Zak",
-		Route:       "/about/",
+		Route:       []string{"/about/"},
 		Handle:      handlers.About,
+		Methods:     []string{"GET"},
 	})
 	s.AddEndpoint(&service.Endpoint{
 		Name:        "Hobbies",
 		Description: "A little more about Zak and his interests",
-		Route:       "/hobbies/",
+		Route:       []string{"/hobbies/"},
 		Handle:      handlers.Hobbies,
+		Methods:     []string{"GET"},
 	})
 	s.AddEndpoint(&service.Endpoint{
 		Name:        "Skills",
 		Description: "Zak's technical skills",
-		Route:       "/skills/",
+		Route:       []string{"/skills/"},
 		Handle:      handlers.Skills,
+		Methods:     []string{"GET"},
 	})
 	s.AddEndpoint(&service.Endpoint{
 		Name:        "Work",
 		Description: "Zak's previous work experience",
-		Route:       "/work/",
+		Route:       []string{"/work/", "/work/{company}"},
 		Handle:      handlers.Work,
+		Methods:     []string{"GET", "POST"},
 	})
 
 	s.AddResource("db", &service.Database{

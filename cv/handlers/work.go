@@ -2,57 +2,86 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"time"
+	"strconv"
+
+	tiedot "github.com/HouzuoGuo/tiedot/db"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/gorilla/context"
+	"github.com/gorilla/mux"
+	s "github.com/zknill/RESTume/service"
 )
 
-type Career struct {
-	Jobs []*Job
-}
+//TODO: refactor this file, there shouldn't be references to the database used. Abstract these.
+//TODO: refactor endpoint method, it's too long. split out logically.
+//TODO: add authentication to this endpoint. Anyone can add data into the db.
 
-type Job struct {
-	Start   int64
-	End     int64
-	Company string
-	Title   string
-	Notes   string
-}
-
+// Work is the work endpoint handler
 func Work(w http.ResponseWriter, r *http.Request) error {
 	// TODO: architect the context and resources better - this is horrible.
-	//sh := context.Get(r, s.ContextKey).(*s.ServiceHandler)
-	//db := sh.Resources["db"].(*s.Database).Data
-	//work := db.Use("work")
+	sh := context.Get(r, s.ContextKey).(*s.ServiceHandler)
+	db := sh.Resources["db"].(*s.Database).Data
+	col := db.Use("career")
 
-	c := Career{}
-	notes := "Working on the launch of a web-based company . Working in an agile team, on the back-end of an" +
-		"automatic document generation system, as well as writing requirements and designing the wireframes" +
-		"for webpages to support the system."
-	c.AddJob(&Job{
-		Start:   1401580800,
-		End:     1409529600,
-		Company: "Geniac",
-		Title:   "IT Engineer/Developer",
-		Notes:   notes,
-	})
-	notes = "Using Agile methodologies to develop dockerized Go and Python micro-services with RESTful APIs." +
-		"Including developing services to aggregate and process real-time data from servers all over the world."
-	c.AddJob(&Job{
-		Start:   1446336000,
-		End:     time.Now().Unix(),
-		Company: "Multiplay",
-		Title:   "Developer",
-		Notes:   notes,
-	})
+	if r.Method == "POST" {
+		if _, err := dbPOST(r, col); err != nil {
+			return fmt.Errorf(fmt.Sprint("POST error: %s", err))
+		}
+		w.Write([]byte(`{"success": "True"}`))
+		return nil
+	}
 
-	b, err := json.Marshal(c)
+	vars := mux.Vars(r)
+
+	spew.Dump(vars)
+	comp := vars["company"]
+
+	q := map[string]interface{}{
+		"eq": comp,
+		"in": []string{"Company"},
+	}
+
+	//TODO: make this not shit! marshall and unmarshall are expensive operations.
+	b, _ := json.Marshal(q)
+
+	var query interface{}
+	queryResult := make(map[int]struct{})
+
+	if err := json.Unmarshal(b, &query); err != nil {
+		return err
+	}
+
+	spew.Dump(query)
+
+	tiedot.EvalQuery(query, col, &queryResult)
+
+	// Construct array of result
+	resultDocs := make(map[string]interface{}, len(queryResult))
+	counter := 0
+	for docID := range queryResult {
+		doc, _ := col.Read(docID)
+		if doc != nil {
+			resultDocs[strconv.Itoa(docID)] = doc
+			counter++
+		}
+	}
+	// Serialize the array
+	resp, err := json.Marshal(resultDocs)
 	if err != nil {
 		return err
 	}
-	w.Write(b)
+
+	w.Write(resp)
+
 	return nil
 }
 
-func (c *Career) AddJob(j *Job) {
-	c.Jobs = append(c.Jobs, j)
+func dbPOST(r *http.Request, col *tiedot.Col) (id int, err error) {
+	data := map[string]interface{}{}
+	decoder := json.NewDecoder(r.Body)
+	decoder.Decode(&data)
+
+	id, err = col.Insert(data)
+	return
 }

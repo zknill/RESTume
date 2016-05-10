@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
-func Skills (w http.ResponseWriter, r *http.Request) error {
+func Skills(w http.ResponseWriter, r *http.Request) error {
 	// TODO: replace this with a document store instead of hardcoded data.
 	var skills [2]string
 	skills[0] = "Golang"
