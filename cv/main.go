@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/zknill/RESTume/cv/handlers"
 	"github.com/zknill/RESTume/service"
+	"github.com/zknill/RESTume/service/resources"
 )
 
 func main() {
@@ -37,9 +38,15 @@ func main() {
 		Methods:     []string{"GET", "POST"},
 	})
 
-	s.AddResource("db", &service.Database{
-		Name:     "tiedot",
-		Location: "/tmp/database",
+	career := &resources.Collection{
+		Col:   "career",
+		Index: []string{"Company"},
+	}
+
+	s.AddResource("db", &resources.Database{
+		Name:        "tiedot",
+		Location:    "/tmp/tiedot-database",
+		Collections: []*resources.Collection{career},
 	})
 
 	s.Run()
