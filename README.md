@@ -6,9 +6,7 @@ Heavily influenced by and based upon [Matt Heath's Golang UK Conference talk](ht
 A REST API that exposes my CV for the world to see.
 
 ## TODO
-- Before any more endpoints/features. Write some proper tests
-
-
+- Consider how to properly test the more complex endpoints
 - Add better database integration.
 - Add support for more RESTful paths. e.g. /work/{job}/{detail}
 - Add better tests
