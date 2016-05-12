@@ -10,7 +10,7 @@ func main() {
 	end := &service.Endpoint{
 		Name:        "Hello World",
 		Description: "A very simple endpoint to test the service implementation",
-		Route:       "/",
+		Route:       []string{"/"},
 		Handle:      handlers.Hello,
 	}
 

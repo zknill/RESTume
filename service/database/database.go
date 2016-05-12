@@ -1,9 +1,10 @@
-package resources
+package database
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	tiedot "github.com/HouzuoGuo/tiedot/db"
 	log "github.com/golang/glog"
@@ -50,11 +51,43 @@ func (db *Database) Init() {
 	db.Data = data
 }
 
-func DBInsert(r *http.Request, col *tiedot.Col) (id int, err error) {
+func Insert(r *http.Request, col *tiedot.Col) (id int, err error) {
 	data := map[string]interface{}{}
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&data)
 
 	id, err = col.Insert(data)
+	return
+}
+
+func Query(col *tiedot.Col, q map[string]interface{}) (resp []byte, err error) {
+	var query interface{}
+
+	// TODO: Find a better way to do this. Marshal and Unmarshal are expensive operations.
+	b, _ := json.Marshal(q)
+	json.Unmarshal(b, &query)
+
+	queryResult := make(map[int]struct{})
+	// Do the query
+	tiedot.EvalQuery(query, col, &queryResult)
+	return FlatResult(col, &queryResult)
+
+}
+
+func FlatResult(col *tiedot.Col, queryResult *map[int]struct{}) (resp []byte, err error) {
+	// Construct array of results
+	resultDocs := make(map[string]interface{}, len(*queryResult))
+	for docID := range *queryResult {
+		doc, _ := col.Read(docID)
+		if doc != nil {
+			resultDocs[strconv.Itoa(docID)] = doc
+		}
+	}
+
+	// Serialize the array
+	resp, err = json.Marshal(resultDocs)
+	if err != nil {
+		return nil, err
+	}
 	return
 }
