@@ -35,6 +35,7 @@ type Handler func(http.ResponseWriter, *http.Request) error
 
 type key int
 
+// ContextKey is the key used to look up details in teh gorilla context
 const ContextKey key = 0
 
 // Init returns a new empty web-service

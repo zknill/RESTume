@@ -1,11 +1,12 @@
 package handlers
 
 import (
-	"net/http"
 	"encoding/json"
+	"net/http"
 )
 
-func Hobbies (w http.ResponseWriter, r *http.Request) error {
+// Hobbies is a basic endpoint handler that exposes data about interests.
+func Hobbies(w http.ResponseWriter, r *http.Request) error {
 	// TODO: replace this with a document store instead of hardcoded data.
 	hobbies := [3]string{"Running", "Marathons", "Code"}
 	b, err := json.Marshal(map[string]interface{}{
@@ -17,4 +18,3 @@ func Hobbies (w http.ResponseWriter, r *http.Request) error {
 	w.Write(b)
 	return nil
 }
-

@@ -18,6 +18,7 @@ type Database struct {
 	Data        *tiedot.DB
 }
 
+// Collection represents a collection in the DB and the indicies on that collection
 type Collection struct {
 	Col   string
 	Index []string
@@ -51,6 +52,7 @@ func (db *Database) Init() {
 	db.Data = data
 }
 
+// Insert inserts the body of the request passed into the collection passed.
 func Insert(r *http.Request, col *tiedot.Col) (id int, err error) {
 	data := map[string]interface{}{}
 	decoder := json.NewDecoder(r.Body)
@@ -60,6 +62,7 @@ func Insert(r *http.Request, col *tiedot.Col) (id int, err error) {
 	return
 }
 
+// Query queries the collection passed based on the query passed and returns the flattened results as bytes.
 func Query(col *tiedot.Col, q map[string]interface{}) (resp []byte, err error) {
 	var query interface{}
 
@@ -74,6 +77,8 @@ func Query(col *tiedot.Col, q map[string]interface{}) (resp []byte, err error) {
 
 }
 
+// FlatResult takes a collection and a set of queryResult docIDs and flattens the results into an array.
+// then returns it as bytes
 func FlatResult(col *tiedot.Col, queryResult *map[int]struct{}) (resp []byte, err error) {
 	// Construct array of results
 	resultDocs := make(map[string]interface{}, len(*queryResult))

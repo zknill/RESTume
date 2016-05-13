@@ -24,7 +24,7 @@ func Work(w http.ResponseWriter, req *http.Request) error {
 	// If we are POSTing data
 	if req.Method == "POST" {
 		if _, err := db.Insert(req, col); err != nil {
-			return fmt.Errorf(fmt.Sprint("Database insert error: %s", err))
+			return fmt.Errorf("Database insert error: %s", err)
 		}
 		w.Write([]byte(`{"success": "True"}`))
 		return nil

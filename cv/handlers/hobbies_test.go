@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"testing"
-	"net/http/httptest"
-	"net/http"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 )
 

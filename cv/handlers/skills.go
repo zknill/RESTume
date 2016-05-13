@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// Skills is a basic endpoint handler that exposes data about technical skills
 func Skills(w http.ResponseWriter, r *http.Request) error {
 	// TODO: replace this with a document store instead of hardcoded data.
 	var skills [2]string
