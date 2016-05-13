@@ -4,9 +4,12 @@ Heavily influenced by and based upon [Matt Heath's Golang UK Conference talk](ht
 
 ## The vision
 A REST API that exposes my CV for the world to see.
+The service should be built in a way that allows more features or services to be quickly added on later.
+The code should have good test coverage, with tests not being treated as a second class citizen.
 
 ## TODO
-- Consider how to properly test the more complex endpoints
-- Add better database integration.
-- Add support for more RESTful paths. e.g. /work/{job}/{detail}
 - Add better tests
+- Build a proper service testing rig, to avoid service config setup in the tests.
+- Expand the remaning endpoints out to use the database and not hardcoded data.
+- Add authentication to POST requests.
+- Consider how to deploy the code. Maybe using google app engine.
