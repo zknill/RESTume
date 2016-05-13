@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/golang/glog"
@@ -16,7 +17,8 @@ import (
 )
 
 func TestWork(t *testing.T) {
-	handler := setup()
+	loc, handler := setup()
+	defer os.RemoveAll(loc)
 
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
@@ -54,7 +56,7 @@ func TestWork(t *testing.T) {
 }
 
 // TODO: build a proper test rig so that this setup isnt needed per end-point that we test.
-func setup() http.Handler {
+func setup() (string, http.Handler) {
 	s := service.Init()
 
 	s.AddEndpoint(&service.Endpoint{
@@ -70,9 +72,10 @@ func setup() http.Handler {
 		Index: []string{"Company"},
 	}
 
+	loc := "/tmp/tiedot-test-database"
 	s.AddResource("db", &db.Database{
 		Name:        "tiedot",
-		Location:    "/tmp/tiedot-database",
+		Location:    loc,
 		Collections: []*db.Collection{career},
 	})
 
@@ -89,5 +92,5 @@ func setup() http.Handler {
 		}
 	}
 
-	return router
+	return loc, router
 }

@@ -20,18 +20,18 @@ type Endpoint struct {
 	Name        string
 	Description string
 	Route       []string
-	Handle      Handler
+	Handle      Handle
 	Methods     []string
 }
 
-// ServiceHandler implements the http.Handler interface
-type ServiceHandler struct {
+// Handler implements the http.Handler interface
+type Handler struct {
 	Endpoint  *Endpoint
 	Resources map[string]Resource
 }
 
-// Handler is a func that will handle endpoint requests
-type Handler func(http.ResponseWriter, *http.Request) error
+// Handle is a func that will handle endpoint requests, e.g. Work
+type Handle func(http.ResponseWriter, *http.Request) error
 
 type key int
 
@@ -77,12 +77,12 @@ func (s *Service) AddResource(key string, r Resource) {
 }
 
 // NewServiceHandler returns a new Handler for the service that implements http.Handler
-func NewServiceHandler(end *Endpoint, r map[string]Resource) *ServiceHandler {
-	return &ServiceHandler{Endpoint: end, Resources: r}
+func NewServiceHandler(end *Endpoint, r map[string]Resource) *Handler {
+	return &Handler{Endpoint: end, Resources: r}
 }
 
 // ServeHTTP implements the http.Handler interface for a ServiceHandler
-func (sh *ServiceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (sh *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// all responses are JSON.
 	w.Header().Add("Content-type", "application/json")
 
