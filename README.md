@@ -10,6 +10,8 @@ The code should have good test coverage, with tests not being treated as a secon
 ## TODO
 - Add better tests
 - Build a proper service testing rig, to avoid service config setup in the tests.
-- Expand the remaning endpoints out to use the database and not hardcoded data.
+- Expand the remaining endpoints out to use the database and not hardcoded data.
 - Add authentication to POST requests.
 - Consider how to deploy the code. Maybe using google app engine.
+- Clean up service.go and split out the handlers code
+- Refactor the endpoints to use /{collection}/{index}/{query} as there will be a lot of duplicate code.

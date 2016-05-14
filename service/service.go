@@ -47,6 +47,7 @@ func Init() *Service {
 
 // Run kicks off the service and adds all the handlers for the endpoints.
 func (s *Service) Run() {
+	log.Infoln("Running " + s.Name)
 	// Setup all the resources that the service requires.
 	for _, r := range s.Resources {
 		r.Init()
@@ -62,7 +63,7 @@ func (s *Service) Run() {
 	}
 
 	// Register the router as the http.Handler
-	http.Handle("/", router)
+	http.Handle("/", Logger(router, s.Name))
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 

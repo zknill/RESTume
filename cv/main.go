@@ -1,13 +1,17 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/zknill/RESTume/cv/handlers"
 	"github.com/zknill/RESTume/service"
 	db "github.com/zknill/RESTume/service/database"
 )
 
 func main() {
+	flag.Parse()
 	s := service.Init()
+	s.Name = "cv"
 
 	s.AddEndpoint(&service.Endpoint{
 		Name:        "About",

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go run cv/main.go
+go run cv/main.go -logtostderr
