@@ -15,7 +15,7 @@ import (
 //TODO: add authentication to this endpoint. Anyone can add data into the db.
 
 // Work is the work endpoint handler
-func Work(w http.ResponseWriter, req *http.Request) error {
+func Work(w http.ResponseWriter, req *http.Request) *s.HandlerError {
 	// TODO: architect the context and resources better - this is horrible.
 	eh := context.Get(req, s.ContextKey).(*s.EndpointHandler)
 	data := eh.Resources["db"].(*db.Database).Data
@@ -24,7 +24,7 @@ func Work(w http.ResponseWriter, req *http.Request) error {
 	// If we are POSTing data
 	if req.Method == "POST" {
 		if _, err := db.Insert(req, col); err != nil {
-			return fmt.Errorf("Database insert error: %s", err)
+			return s.NewError(fmt.Errorf("Database insert error: %s", err))
 		}
 		w.Write([]byte(`{"success": "True"}`))
 		return nil
@@ -48,5 +48,5 @@ func Work(w http.ResponseWriter, req *http.Request) error {
 	}
 
 	w.Write(resp)
-	return err
+	return s.NewError(err)
 }

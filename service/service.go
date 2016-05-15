@@ -12,6 +12,7 @@ import (
 type Service struct {
 	Name      string
 	Endpoints []*Endpoint
+	// Note: Beware maps aren't thread safe
 	Resources map[string]Resource
 }
 
@@ -26,12 +27,13 @@ type Endpoint struct {
 
 // EndpointHandler implements the http.Handler interface
 type EndpointHandler struct {
-	Endpoint  *Endpoint
+	Endpoint *Endpoint
+	// TODO: beware - this isn't thread safe
 	Resources map[string]Resource
 }
 
 // Handle is a func that will handle endpoint requests, e.g. Work
-type Handle func(http.ResponseWriter, *http.Request) error
+type Handle func(http.ResponseWriter, *http.Request) *HandlerError
 
 type key int
 
@@ -58,7 +60,7 @@ func (s *Service) Run() {
 	for _, e := range s.Endpoints {
 		// Register the different routes for each endpoint
 		for _, r := range e.Route {
-			router.Handle(r, NewEndpointHandler(e, s.Resources)).Methods(e.Methods...)
+			router.Handle(r, sampleMiddleWare(NewEndpointHandler(e, s.Resources))).Methods(e.Methods...)
 		}
 	}
 
@@ -93,6 +95,13 @@ func (sh *EndpointHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Call the correct handler for the endpoint
 	if err := sh.Endpoint.Handle(w, r); err != nil {
 		log.Error(err.Error())
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), err.Code)
 	}
+}
+
+func sampleMiddleWare(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Middleware logic here
+		next.ServeHTTP(w, r)
+	})
 }

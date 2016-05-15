@@ -41,6 +41,13 @@ func main() {
 		Handle:      handlers.Work,
 		Methods:     []string{"GET", "POST"},
 	})
+	s.AddEndpoint(&service.Endpoint{
+		Name:        "REST",
+		Description: "RESTful endpoint that only uses the URL",
+		Route:       []string{"/{collection}/", "/{collection}/{index}/{field}/{value}"},
+		Handle:      handlers.REST,
+		Methods:     []string{"GET"},
+	})
 
 	career := &db.Collection{
 		Col:   "career",
