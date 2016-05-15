@@ -17,8 +17,8 @@ import (
 // Work is the work endpoint handler
 func Work(w http.ResponseWriter, req *http.Request) error {
 	// TODO: architect the context and resources better - this is horrible.
-	sh := context.Get(req, s.ContextKey).(*s.Handler)
-	data := sh.Resources["db"].(*db.Database).Data
+	eh := context.Get(req, s.ContextKey).(*s.EndpointHandler)
+	data := eh.Resources["db"].(*db.Database).Data
 	col := data.Use("career")
 
 	// If we are POSTing data

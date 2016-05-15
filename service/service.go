@@ -24,8 +24,8 @@ type Endpoint struct {
 	Methods     []string
 }
 
-// Handler implements the http.Handler interface
-type Handler struct {
+// EndpointHandler implements the http.Handler interface
+type EndpointHandler struct {
 	Endpoint  *Endpoint
 	Resources map[string]Resource
 }
@@ -58,7 +58,7 @@ func (s *Service) Run() {
 	for _, e := range s.Endpoints {
 		// Register the different routes for each endpoint
 		for _, r := range e.Route {
-			router.Handle(r, NewServiceHandler(e, s.Resources)).Methods(e.Methods...)
+			router.Handle(r, NewEndpointHandler(e, s.Resources)).Methods(e.Methods...)
 		}
 	}
 
@@ -77,13 +77,13 @@ func (s *Service) AddResource(key string, r Resource) {
 	s.Resources[key] = r
 }
 
-// NewServiceHandler returns a new Handler for the service that implements http.Handler
-func NewServiceHandler(end *Endpoint, r map[string]Resource) *Handler {
-	return &Handler{Endpoint: end, Resources: r}
+// NewEndpointHandler returns a new Handler for the service that implements http.Handler
+func NewEndpointHandler(end *Endpoint, r map[string]Resource) *EndpointHandler {
+	return &EndpointHandler{Endpoint: end, Resources: r}
 }
 
 // ServeHTTP implements the http.Handler interface for a ServiceHandler
-func (sh *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (sh *EndpointHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// all responses are JSON.
 	w.Header().Add("Content-type", "application/json")
 

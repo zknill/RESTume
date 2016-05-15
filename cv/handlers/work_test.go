@@ -55,7 +55,7 @@ func TestWork(t *testing.T) {
 
 }
 
-// TODO: build a proper test rig so that this setup isnt needed per end-point that we test.
+// TODO: build a proper test rig so that this setup isn't needed per end-point that we test.
 func setup() (string, http.Handler) {
 	s := service.Init()
 
@@ -88,7 +88,7 @@ func setup() (string, http.Handler) {
 	for _, e := range s.Endpoints {
 		// Register the different routes for each endpoint
 		for _, r := range e.Route {
-			router.Handle(r, service.NewServiceHandler(e, s.Resources)).Methods(e.Methods...)
+			router.Handle(r, service.NewEndpointHandler(e, s.Resources)).Methods(e.Methods...)
 		}
 	}
 
