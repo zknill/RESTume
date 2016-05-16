@@ -26,7 +26,7 @@ func TestREST(t *testing.T) {
 
 	b, _ := ioutil.ReadAll(resp.Body)
 
-	assert.Equal(t, []byte("Not found\n"), b)
+	assert.Equal(t, []byte("Not found: collection does not exist.\n"), b)
 }
 
 func setupREST() (string, http.Handler) {
@@ -35,13 +35,13 @@ func setupREST() (string, http.Handler) {
 	s.AddEndpoint(&service.Endpoint{
 		Name:        "REST",
 		Description: "RESTful endpoint that only uses the URL",
-		Route:       []string{"/{collection}/", "/{collection}/{index}/{field}/{value}"},
+		Route:       []string{"/{collection}/", "/{collection}/{index}/{value}/"},
 		Handle:      REST,
 		Methods:     []string{"GET", "POST"},
 	})
 
 	career := &db.Collection{
-		Col:   "career",
+		Name:  "career",
 		Index: []string{"Company"},
 	}
 

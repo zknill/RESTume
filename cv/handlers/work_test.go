@@ -68,7 +68,7 @@ func setup() (string, http.Handler) {
 	})
 
 	career := &db.Collection{
-		Col:   "career",
+		Name:  "career",
 		Index: []string{"Company"},
 	}
 

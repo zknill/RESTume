@@ -15,26 +15,54 @@ func REST(w http.ResponseWriter, r *http.Request) *s.HandlerError {
 	// RESTful URL/{collection}/{index}/{query}
 
 	vars := mux.Vars(r)
-	col := vars["collection"]
+	colName := vars["collection"]
 
-	//idx := vars["index"]
-	//field := vars["field"]
-	//val := vars["val"]
+	idx := vars["index"]
+	val := vars["value"]
 
 	eh := context.Get(r, s.ContextKey).(*s.EndpointHandler)
-	cols := eh.Resources["db"].(*db.Database).Collections
+	d := eh.Resources["db"].(*db.Database)
+	cols := d.Collections
 
-	bCol := false
-	for _, c := range cols {
-		if c.Col == col {
-			bCol = true
-		}
+	c, err := validateCol(cols, colName)
+	if err != nil {
+		return err
 	}
-	if !bCol {
-		return &s.HandlerError{
-			Err:  fmt.Errorf("Not found"),
-			Code: http.StatusNotFound,
-		}
+
+	if !validateIdx(c, idx) {
+		return &s.HandlerError{Err: fmt.Errorf("Not found: index does not exist."), Code: 404}
 	}
+
+	q := map[string]interface{}{
+		"eq": val,
+		"in": []string{idx},
+	}
+
+	dbCol := d.Data.Use(c.Name)
+
+	b, dbErr := db.Query(dbCol, q)
+	if dbErr != nil {
+		return &s.HandlerError{Err: fmt.Errorf("Not found."), Code: 404}
+	}
+
+	w.Write(b)
 	return nil
+}
+
+func validateCol(cols []*db.Collection, col string) (*db.Collection, *s.HandlerError) {
+	for _, c := range cols {
+		if c.Name == col {
+			return c, nil
+		}
+	}
+	return nil, &s.HandlerError{Err: fmt.Errorf("Not found: collection does not exist."), Code: 404}
+}
+
+func validateIdx(col *db.Collection, idx string) bool {
+	for _, i := range col.Index {
+		if i == idx {
+			return true
+		}
+	}
+	return false
 }

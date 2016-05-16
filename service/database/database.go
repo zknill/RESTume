@@ -20,7 +20,7 @@ type Database struct {
 
 // Collection represents a collection in the DB and the indicies on that collection
 type Collection struct {
-	Col   string
+	Name  string
 	Index []string
 }
 
@@ -45,8 +45,8 @@ func (db *Database) Init() {
 
 	// Set up the collections - throw away the error for now.
 	for _, c := range db.Collections {
-		data.Create(c.Col)
-		data.Use(c.Col).Index(c.Index)
+		data.Create(c.Name)
+		data.Use(c.Name).Index(c.Index)
 	}
 
 	db.Data = data
