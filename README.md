@@ -1,6 +1,7 @@
 # RESTumé
 Simple little RESTful API to serve my CV.
-Heavily influenced by and based upon [Matt Heath's Golang UK Conference talk](https://www.youtube.com/watch?v=cFJkLfujOts).
+As [Github is your Resume now,](http://anti-pattern.com/github-is-your-resume-now) I thought it'd be fun to serve my CV from a Github project.
+Influenced by [Matt Heath's Golang UK Conference talk](https://www.youtube.com/watch?v=cFJkLfujOts).
 
 ## The vision
 A REST API that exposes my CV for the world to see.
@@ -8,7 +9,6 @@ The service should be built in a way that allows more features or services to be
 The code should have good test coverage, with tests not being treated as a second class citizen.
 
 ## TODO
-- Add better tests
 - Build a proper service testing rig, to avoid service config setup in the tests.
 - Expand the remaining endpoints out to use the database and not hardcoded data.
 - Add authentication to POST requests.
