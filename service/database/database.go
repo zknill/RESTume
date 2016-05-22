@@ -66,9 +66,7 @@ func Insert(r *http.Request, col *tiedot.Col) (id int, err error) {
 func Query(col *tiedot.Col, q map[string]interface{}) (resp []byte, err error) {
 	var query interface{}
 
-	// TODO: Find a better way to do this. Marshal and Unmarshal are expensive operations.
-	b, _ := json.Marshal(q)
-	json.Unmarshal(b, &query)
+	query = interface{}(q)
 
 	queryResult := make(map[int]struct{})
 	// Do the query

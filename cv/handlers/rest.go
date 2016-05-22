@@ -12,7 +12,7 @@ import (
 
 // REST is the generic endpoint handler that relies on RESTful URLs
 func REST(w http.ResponseWriter, r *http.Request) *s.HandlerError {
-	// RESTful URL/{collection}/{index}/{query}
+	// RESTful URL/{collection}/{index}/{value}
 
 	vars := mux.Vars(r)
 	colName := vars["collection"]
