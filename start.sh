@@ -1,3 +1,4 @@
 #!/bin/bash
 
-go run cv/main.go -logtostderr
+cd cv
+gin -i -a 8000 run  -- -logtostderr
